@@ -1,0 +1,21 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity contador is
+	generic (n : integer);
+	port (
+			clk, enPC : in std_logic;
+			S : out std_logic_vector (2 downto 0)
+			);
+end contador;
+
+architecture behave of contador is
+begin
+	
+	process(clk, enable)
+	begin
+		if rising_edge(clk) and enable = '1' then
+			S <= E;
+		end if;
+	end process;
+end;
