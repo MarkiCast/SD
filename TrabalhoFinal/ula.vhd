@@ -4,7 +4,7 @@ use ieee.std_logic_signed.all;
 use IEEE. NUMERIC_STD.ALL;
 
 entity ula is
-	generic (n : integer);
+	generic (n : integer := 4);
 	port (
 			A,B : in std_logic_vector (n-1 downto 0);
 			opc : in std_logic_vector (3 downto 0);
@@ -14,6 +14,8 @@ entity ula is
 end ula;
 
 architecture behave of ula is
+
+	signal m : std_logic_vector(7 downto 0);
 
 begin
 	
@@ -26,10 +28,13 @@ begin
 				  A and B when "0101",
 				  A or B when "0110",
 				  A xor B when "0111",
-				  std_logic_vector(signed(A) * signed(B))(3 downto 0) when "1000",
+				  m(3 downto 0) when "1000",
 				  std_logic_vector(signed(A) / signed(B)) when "1001",
 				  "0000" when others;
 				  
+		m <= std_logic_vector(signed(A) * signed(B));
+		flagZula <= "00";
+	
 --	process (A,B,Sula,opc)
 --	begin
 --		if (a(n-1) = '0' and b(n-1) = '0') then
@@ -37,4 +42,4 @@ begin
 --		end if;
 --	end process;
 		
-end;
+end behave;

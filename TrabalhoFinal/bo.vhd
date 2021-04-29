@@ -13,25 +13,24 @@ end bo;
 
 architecture behave of bo is
 
-	signal pc : std_logic_vector (2 downto 0);
-	signal A, B, Sula, dado : std_logic_vector (n-1 downto 0);
+	signal pc : std_logic_vector (4 downto 0);
+	signal A, B, Sula : std_logic_vector (n-1 downto 0);
 	signal opUla: std_logic_vector(3 downto 0);
 	signal flagZula : std_logic_vector(1 downto 0);
-	
+	signal dado : std_logic_vector(7 downto 0);
 
 	component contador is
 	port (
 			clk, enPC : in std_logic;
-			S : buffer std_logic_vector (2 downto 0)
+			S : buffer std_logic_vector (4 downto 0)
 			);
 	end component;
 	
 	component ROM is
-	generic (n : integer);
 	port (
-			clk : in std_logic;
-			pc : in std_logic_vector(2 downto 0);
-			dado : out std_logic_vector(n-1 downto 0)
+			address : in std_logic_vector(4 downto 0);
+			clock : in std_logic;
+			q : out std_logic_vector(7 downto 0)
 			);
 	end component;
 
@@ -59,9 +58,9 @@ begin
 	opcode <= dado(3 downto 0);
 	
 	regPC : contador port map (clk, enPC, pc);
-	memoria: rom generic map (n) port map (clk, pc, dado);
-	regA : reg generic map (n) port map (clk, enA, dado, A);
-	regB : reg generic map (n) port map (clk, enB, dado, B);
+	memoria: rom port map (pc, clk, dado);
+	regA : reg generic map (n) port map (clk, enA, dado(3 downto 0), A);
+	regB : reg generic map (n) port map (clk, enB, dado(3 downto 0), B);
 	regOp : reg generic map (n) port map (clk, enOp, dado(3 downto 0), opUla);
 	regS : reg generic map (n) port map (clk, enOut, Sula, S);
 	regZ : reg generic map (2) port map (clk, enOut, flagZula, flagZ);

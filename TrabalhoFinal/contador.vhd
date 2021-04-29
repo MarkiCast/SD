@@ -5,13 +5,13 @@ use ieee.std_logic_unsigned.all;
 entity contador is
 	port (
 			clk, enPC : in std_logic;
-			S : out std_logic_vector (2 downto 0)
+			S : out std_logic_vector (4 downto 0)
 			);
 end contador;
 
 architecture behave of contador is
 
-	signal c : std_logic_vector(2 downto 0) := "000";
+	signal c : std_logic_vector(4 downto 0) := "00000";
 
 begin
 	
