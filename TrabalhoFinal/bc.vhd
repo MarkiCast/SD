@@ -9,35 +9,43 @@ PORT (clk : IN STD_LOGIC;
 END bc;
 
 ARCHITECTURE behave OF bc IS
-	TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7, S8);
+	
+	TYPE state_type IS (S0, S1, S2, S3, S4, s5);
 	SIGNAL state: state_type;
+	signal PCaux : std_logic_vector(1 downto 0) := "00";
+	
 BEGIN
 	-- Logica de proximo estado (e registrador de estado)
-	PROCESS (clk, opcode)
+	PROCESS (clk, opcode, pcaux)
 	BEGIN
 		IF rising_edge(clk) THEN
 			CASE state IS
 				WHEN S0 => state <= S1;
 				
-				WHEN S1 => state <= S2; 				  
-
-				WHEN S2 => if (opcode = "0010" or opcode =  "0011" or opcode =  "0100") THEN
-									state <= S3;
-							  else 
-									state <= S5;
+				WHEN S1 => if (pcaux(0) = '1') then
+									state <= s4;
+								elsif (pcaux = "10") then
+									state <= s5;
+							  else
+									state <= s2;
 							  end if;
 
-				WHEN S3 => state <= S4;
+				WHEN S2 => if (opcode = "0010" or opcode = "0011" or opcode = "0100") then
+									state <= s3;
+							  else 
+									state <= s1;
+							  end if;
+
+				when s3 => state <= s1;
+				
+				WHEN S4 => if (pcaux = "00") THEN
+									state <= S0;
+							  else
+									state <= S1;
+							  end if;
+				
+				WHEN S5 => state <= S0;
 			
-				when s4 => state <= s0;
-				
-				when s5 => state <= s6;
-				
-				when s6 => state <= s7;
-				
-				when s7 => state <= s8;
-				
-				when s8 => state <= s0;
 				
 			END CASE;
 		END IF;
@@ -53,6 +61,7 @@ BEGIN
 				enB <= '0';
 				enOp <= '0';
 				enOut <= '1';
+				pcaux <= "00";
 				
 			WHEN S1 => 
 				enPC <= '1';
@@ -67,49 +76,31 @@ BEGIN
 				enB <= '0';
 				enOp <= '1';
 				enOut <= '0';
-				
+				pcaux <= "11";
+							
 			WHEN S3 =>
-				enPC <= '1';
+				enPC <= '0';
 				enA <= '0';
 				enB <= '0';
 				enOp <= '0';
 				enOut <= '0';
-
+				pcaux <= "01";
+				
 			WHEN S4 =>
 				enPC <= '0';
 				enA <= '1';
 				enB <= '0';
 				enOp <= '0';
 				enOut <= '0';
-				
+				pcaux(0) <= '0';
+			
 			WHEN S5 =>
-				enPC <= '1';
-				enA <= '0';
-				enB <= '0';
-				enOp <= '0';
-				enOut <= '0';
-			
-			WHEN S6 =>
-				enPC <= '0';
-				enA <= '1';
-				enB <= '0';
-				enOp <= '0';
-				enOut <= '0';	
-			
-			WHEN S7 =>
-				enPC <= '1';
-				enA <= '0';
-				enB <= '0';
-				enOp <= '0';
-				enOut <= '0';	
-				
-			WHEN S8 =>
 				enPC <= '0';
 				enA <= '0';
 				enB <= '1';
 				enOp <= '0';
 				enOut <= '0';
-				
+	
 		END CASE;
 	END PROCESS;
 END behave;

@@ -20,7 +20,7 @@ architecture behave of bo is
 	signal dado : std_logic_vector(7 downto 0);
 
 	component contador is
-	port (
+	port (	
 			clk, enPC : in std_logic;
 			S : buffer std_logic_vector (4 downto 0)
 			);
@@ -55,12 +55,12 @@ architecture behave of bo is
 		
 begin
 	
-	opcode <= dado(3 downto 0);
+	opcode <= opUla;
 	
 	regPC : contador port map (clk, enPC, pc);
 	memoria: rom port map (pc, clk, dado);
-	regA : reg generic map (n) port map (clk, enA, dado(3 downto 0), A);
-	regB : reg generic map (n) port map (clk, enB, dado(3 downto 0), B);
+	regA : reg generic map (n) port map (clk, enA, dado(n-1 downto 0), A);
+	regB : reg generic map (n) port map (clk, enB, dado(n-1  downto 0), B);
 	regOp : reg generic map (n) port map (clk, enOp, dado(3 downto 0), opUla);
 	regS : reg generic map (n) port map (clk, enOut, Sula, S);
 	regZ : reg generic map (2) port map (clk, enOut, flagZula, flagZ);
