@@ -4,23 +4,17 @@ USE ieee.std_logic_1164.all;
 ENTITY bc IS
 PORT (clk : IN STD_LOGIC;
 		opcode: in std_logic_vector(3 downto 0);
-		enPC, enA, enB, enOut, enOp: OUT STD_LOGIC;
-		
-		--Multi
-		Amaior, Amenor, Aigual, Pronto: in std_logic;
-		RegM, RegN, RegAQ, mux_count, dlc, r: out std_logic;
-		OP, mux_aq: out std_logic_vector(1 downto 0)
-		
+		enPC, enA, enB, enOut, enOp, enMulti: OUT STD_LOGIC
 		);
 END bc;
 
 ARCHITECTURE behave OF bc IS
-	TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, s13);
+	TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, s7, s8, s9, s13);
 	SIGNAL state: state_type;
 	signal pcaux : std_logic_vector (1 downto 0) := "00";
 BEGIN
 	-- Logica de proximo estado (e registrador de estado)
-	PROCESS (clk, pcaux, opcode, AMaior, AMenor, AIgual, Pronto)
+	PROCESS (clk, pcaux, opcode)
 	BEGIN
 		IF rising_edge(clk) THEN
 			CASE state IS
@@ -43,41 +37,24 @@ BEGIN
 							  else 
 									state <= s1;
 							  end if;
+							  
+				when s5 => state <= s7;
 				
-				when s5 => if (pcaux = "00") then
+				when s7 => if (pcaux = "00") then
 									state <= s0;
 								else
 									state <= s1;
 								end if;
 				
-				when s6 => if (opcode = "1000") then
-									state <= s7;
+				when s6 => state <= s8;
+				
+				when s8 => if (opcode = "1000") then
+									state <= s9;
 								else
 									state <= s0;
 								end if;
-				
-				when S7 => state <= S8;
-		
-				when S8 => state <= S9;
-				
-				when S9 =>
-				if (Pronto = '1') then
-					state <= S0;
-					else
-						if (AMaior = '1') then
-							state <= S11;
-						elsif (AMenor = '1') then
-							state <= S10;
-						else
-							state <= S12;
-						end if;
-				end if;
-				
-				when S10 => state <= S12;
-				
-				when S11 => state <= S12;
-				
-				when S12 => state <= S9;
+								
+				when s9 => state <= s0;
 				
 				when s13 => state <= s1;
 				
@@ -96,6 +73,7 @@ BEGIN
 				enOp <= '0';
 				enOut <= '1';
 				pcaux <= "00";
+				enMulti <= '0';
 				
 			WHEN S1 => 
 				enPC <= '1';
@@ -103,6 +81,7 @@ BEGIN
 				enB <= '0';
 				enOp <= '0';
 				enOut <= '0';
+				enMulti <= '0';
 				
 			WHEN S2 => 
 				enPC <= '0';
@@ -141,64 +120,23 @@ BEGIN
 				enOp <= '0';
 				enOut <= '0';	
 				
-			
-			when S7 => RegM <= '0';
-							RegAQ <= '0';
-							Op <= "00";
-							Dlc <= '0';
-							RegN <= '0';
-							R <= '1';
-							mux_count <= '0';
-							mux_AQ <= "01";
-							
-		 when S8 => RegM <= '1';
-							RegAQ <= '1';
-							Op <= "00";
-							Dlc <= '0';
-							RegN <= '1';
-							R <= '0';
-							mux_count <= '1';
-							mux_AQ <= "01";
-	
-							
-		 when S9 => RegM <= '0';    
-							RegAQ <= '0';
-							Op <= "00";
-							Dlc <= '0';
-							RegN <= '0';
-							R <= '0';
-							mux_count <= '0';
-							mux_AQ <= "11";
-	
-	
-							
-		 when S10 => RegM <= '0';    
-							RegAQ <= '1';
-							Op <= "10";
-							Dlc <= '0'; 
-							RegN <= '0';
-							R <= '0';
-							mux_count <= '0';
-							mux_AQ <= "00";
-	
-	
-		 when S11 => RegM <= '0';    
-							RegAQ <= '1';
-							Op <= "01";
-							Dlc <= '0'; 
-							RegN <= '0';
-							R <= '0';
-							mux_count <= '0';
-							mux_AQ <= "00";
-	
-		 when S12 => RegM <= '0';    
-							RegAQ <= '0';
-							Op <= "11";
-							Dlc <= '1';
-							RegN <= '1';
-							R <= '0';
-							mux_count <= '0';
-							mux_AQ <= "00";
+			WHEN S7 =>
+				enPC <= '0';
+				enA <= '0';
+				enB <= '0';
+				enOp <= '0';
+				enOut <= '0';
+				
+			WHEN S8 =>
+				enPC <= '0';
+				enA <= '0';
+				enB <= '0';
+				enOp <= '0';
+				enOut <= '0';
+				
+			WHEN S9 => enMulti <= '1';
+				
+				
 
 		when s13 => pcaux <= "01";	
 						

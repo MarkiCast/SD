@@ -15,7 +15,7 @@ begin
 	process(clk, enPC)
 	variable c : integer range -1 to 31;
 	begin
-		if (rising_edge(clk) and enPC = '1') then
+		if (rising_edge(clk) and enPC = '1' and c /= 32) then
 			c := c+1;
 		end if;
 		S <= conv_std_logic_vector(c,5);

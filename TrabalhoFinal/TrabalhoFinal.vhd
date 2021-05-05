@@ -13,57 +13,30 @@ end TrabalhoFinal;
 architecture behave of trabalhoFinal is
 
 	signal opcode : std_logic_vector (3 downto 0);
-	signal enPC, enA, enB, enOut, enOp: std_logic;
+	signal enPC, enA, enB, enOut, enOp, enMulti: std_logic;
 	
-	--Multi
-	signal Amaior, Amenor, Aigual, pronto: std_logic;
-	signal RegM, RegN, RegAQ, Mux_count, Dlc, R: std_logic;
-	signal OP, mux_aq: std_logic_vector(1 downto 0);
-
 	component bc IS
 		PORT (
 				clk : IN STD_LOGIC;
 				opcode: in std_logic_vector(3 downto 0);
-				enPC, enA, enB, enOut, enOp: OUT STD_LOGIC;
-				
-				--Multi
-				Amaior, Amenor, Aigual, Pronto: in std_logic;
-				RegM, RegN, RegAQ, mux_count, dlc, r: out std_logic;
-				OP, mux_aq: out std_logic_vector(1 downto 0)
-				
+				enPC, enA, enB, enOut, enOp, enMulti: OUT STD_LOGIC
 				);
 		END component;
 
 	component bo IS
 	generic ( n : integer);
 		PORT (
-				clk, enPC, enA, enB, enOut, enOp : IN STD_LOGIC;
+				clk, enPC, enA, enB, enOut, enOp, enMulti: IN STD_LOGIC;
 				opcode: out std_logic_vector(3 downto 0);
 				S: out std_logic_vector (3 downto 0);
-				flagZ: out std_logic_vector (1 downto 0);
-				
-				--Multi
-				Amaior, Amenor, Aigual, pronto: out std_logic;
-				RegM, RegN, RegAQ, mux_count, dlc, r: in std_logic;
-				OP, mux_aq: in std_logic_vector(1 downto 0)
-					
+				flagZ: out std_logic_vector (1 downto 0)
 				);
 		END component;
 		
 begin
 	
-	blocontrole: bc port map (clk, opcode, enPC, enA, enB, enOut, enOp,
-										
-									  --Multi
-									  Amaior, Amenor, Aigual, pronto, RegM, RegN, RegAQ, mux_count, dlc, r, OP, mux_aq												
+	blocontrole: bc port map (clk, opcode, enPC, enA, enB, enOut, enOp, enMulti);
 																							
-																							);
-																							
-	blocoperativo: bo generic map (n) port map (clk, enPC, enA, enB, enOut, enOp, opcode, S, flagZ,
-																
-																--Multi
-																Amaior, Amenor, Aigual, pronto, RegM, RegN, RegAQ, mux_count, dlc, r, OP, mux_aq
-																
-																																);
+	blocoperativo: bo generic map (n) port map (clk, enPC, enA, enB, enOut, enOp, enMulti, opcode, S, flagZ);
 
 end behave;

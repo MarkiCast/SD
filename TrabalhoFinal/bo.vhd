@@ -4,16 +4,10 @@ use ieee.std_logic_1164.all;
 entity bo is
 generic (n : integer := 4);
 port (
-		clk, enPC, enA, enB, enOut, enOp : in std_logic;
+		clk, enPC, enA, enB, enOut, enOp, enMulti : in std_logic;
 		opcode: out std_logic_vector(3 downto 0);
 		S: out std_logic_vector (3 downto 0);
-		flagZ: out std_logic_vector (1 downto 0);
-		
-		--Multi
-		Amaior, Amenor, Aigual, pronto: out std_logic;
-		RegM, RegN, RegAQ, mux_count, dlc, r: in std_logic;
-		OP, mux_aq: in std_logic_vector(1 downto 0)
-		
+		flagZ: out std_logic_vector (1 downto 0)
 		);
 end bo;
 
@@ -61,18 +55,11 @@ architecture behave of bo is
 			);
 	end component;
 		
-	component multi_booth is
+	component WallaceTree is
 	GENERIC (N : INTEGER := 4);
-	port (
-		M, Q: in std_logic_vector(N-1 downto 0);
-		Clock: in std_logic;
-		Saida: out std_logic_vector((N*2)-1 downto 0);
-
-		Amaior, Amenor, Aigual, pronto: out std_logic;
-		RegM, RegN, RegAQ, mux_count, dlc, r: in std_logic;
-		OP, mux_aq: in std_logic_vector(1 downto 0)
-		
-     );
+	port (M, Q: in std_logic_vector(N-1 downto 0);
+			clk, enMulti: std_logic;
+			Saida: out std_logic_vector((N*2)-1 downto 0));
 	end component;
 		
 begin
@@ -88,10 +75,6 @@ begin
 	regZ : reg generic map (2) port map (clk, enOut, flagZula, flagZ);
 	ula1 : ula generic map (n) port map ( A, B, opUla, flagZula, Sula, saida_multi(n-1 downto 0));
 	
-	multi : multi_booth generic map (n) port map (A,B,clk,saida_multi,
-																 
-																 Amaior, Amenor, Aigual, pronto, RegM, RegN, RegAQ, mux_count, dlc, r, OP, mux_aq
-	
-																							);
+	multi : WallaceTree generic map (n) port map (A,B,clk,enMulti,saida_multi);
 
 end behave;
