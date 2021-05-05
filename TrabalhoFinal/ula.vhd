@@ -9,7 +9,8 @@ entity ula is
 			A,B : in std_logic_vector (n-1 downto 0);
 			opc : in std_logic_vector (3 downto 0);
 			flagZula : out std_logic_vector (1 downto 0);
-			Sula : out std_logic_vector(n-1 downto 0)
+			Sula : out std_logic_vector(n-1 downto 0);
+			saida_multi : in std_logic_vector(n-1 downto 0)
 			);
 end ula;
 
@@ -28,18 +29,11 @@ begin
 				  A and B when "0101",
 				  A or B when "0110",
 				  A xor B when "0111",
-				  m(3 downto 0) when "1000",
+				  saida_multi(n-1 downto 0) when "1000",
 				  std_logic_vector(signed(A) / signed(B)) when "1001",
 				  "0000" when others;
 				  
-		m <= std_logic_vector(signed(A) * signed(B));
 		flagZula <= "00";
 	
---	process (A,B,Sula,opc)
---	begin
---		if (a(n-1) = '0' and b(n-1) = '0') then
---			flagZula <= "0001";
---		end if;
---	end process;
 		
 end behave;

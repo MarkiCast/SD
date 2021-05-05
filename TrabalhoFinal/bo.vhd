@@ -7,7 +7,13 @@ port (
 		clk, enPC, enA, enB, enOut, enOp : in std_logic;
 		opcode: out std_logic_vector(3 downto 0);
 		S: out std_logic_vector (3 downto 0);
-		flagZ: out std_logic_vector (1 downto 0)
+		flagZ: out std_logic_vector (1 downto 0);
+		
+		--Multi
+		Amaior, Amenor, Aigual, pronto: out std_logic;
+		RegM, RegN, RegAQ, mux_count, dlc, r: in std_logic;
+		OP, mux_aq: in std_logic_vector(1 downto 0)
+		
 		);
 end bo;
 
@@ -18,9 +24,10 @@ architecture behave of bo is
 	signal opUla: std_logic_vector(3 downto 0);
 	signal flagZula : std_logic_vector(1 downto 0);
 	signal dado : std_logic_vector(7 downto 0);
+	signal saida_multi : std_logic_vector (2*n-1 downto 0);
 
 	component contador is
-	port (
+	port (	
 			clk, enPC : in std_logic;
 			S : buffer std_logic_vector (4 downto 0)
 			);
@@ -49,22 +56,42 @@ architecture behave of bo is
 			A,B : in std_logic_vector (n-1 downto 0);
 			opc : in std_logic_vector (3 downto 0);
 			flagZula : out std_logic_vector (1 downto 0);
-			Sula : out std_logic_vector(n-1 downto 0)
+			Sula : out std_logic_vector(n-1 downto 0);
+			saida_multi : in std_logic_vector(n-1 downto 0)
 			);
+	end component;
+		
+	component multi_booth is
+	GENERIC (N : INTEGER := 4);
+	port (
+		M, Q: in std_logic_vector(N-1 downto 0);
+		Clock: in std_logic;
+		Saida: out std_logic_vector((N*2)-1 downto 0);
+
+		Amaior, Amenor, Aigual, pronto: out std_logic;
+		RegM, RegN, RegAQ, mux_count, dlc, r: in std_logic;
+		OP, mux_aq: in std_logic_vector(1 downto 0)
+		
+     );
 	end component;
 		
 begin
 	
-	opcode <= dado(3 downto 0);
+	opcode <= opUla;
 	
 	regPC : contador port map (clk, enPC, pc);
 	memoria: rom port map (pc, clk, dado);
-	regA : reg generic map (n) port map (clk, enA, dado(3 downto 0), A);
-	regB : reg generic map (n) port map (clk, enB, dado(3 downto 0), B);
+	regA : reg generic map (n) port map (clk, enA, dado(n-1 downto 0), A);
+	regB : reg generic map (n) port map (clk, enB, dado(n-1  downto 0), B);
 	regOp : reg generic map (n) port map (clk, enOp, dado(3 downto 0), opUla);
 	regS : reg generic map (n) port map (clk, enOut, Sula, S);
 	regZ : reg generic map (2) port map (clk, enOut, flagZula, flagZ);
-	ula1 : ula generic map (n) port map (A, B, opUla, flagZula, Sula);
+	ula1 : ula generic map (n) port map ( A, B, opUla, flagZula, Sula, saida_multi(n-1 downto 0));
 	
+	multi : multi_booth generic map (n) port map (A,B,clk,saida_multi,
+																 
+																 Amaior, Amenor, Aigual, pronto, RegM, RegN, RegAQ, mux_count, dlc, r, OP, mux_aq
+	
+																							);
 
 end behave;
