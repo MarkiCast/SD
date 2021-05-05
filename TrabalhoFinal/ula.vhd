@@ -10,13 +10,12 @@ entity ula is
 			opc : in std_logic_vector (3 downto 0);
 			flagZula : out std_logic_vector (1 downto 0);
 			Sula : out std_logic_vector(n-1 downto 0);
-			saida_multi : in std_logic_vector(n-1 downto 0)
+			saida_multi : in std_logic_vector(n-1 downto 0);
+			saida_divi : in std_logic_vector(n-1 downto 0)
 			);
 end ula;
 
 architecture behave of ula is
-
-	signal m : std_logic_vector(7 downto 0);
 
 begin
 	
@@ -30,7 +29,7 @@ begin
 				  A or B when "0110",
 				  A xor B when "0111",
 				  saida_multi(n-1 downto 0) when "1000",
-				  std_logic_vector(signed(A) / signed(B)) when "1001",
+				  saida_divi(n-1 downto 0) when "1001",
 				  "0000" when others;
 				  
 		flagZula <= "00";

@@ -7,7 +7,13 @@ port (
 		clk, enPC, enA, enB, enOut, enOp, enMulti : in std_logic;
 		opcode: out std_logic_vector(3 downto 0);
 		S: out std_logic_vector (3 downto 0);
-		flagZ: out std_logic_vector (1 downto 0)
+		flagZ: out std_logic_vector (1 downto 0);
+		
+		--divisor
+		Amenor, Pronto: out std_logic;
+		RegM, RegN, RegAQ, Q0, Dlc, R: in std_logic;
+		OP, mux_aq: in std_logic_vector(1 downto 0)
+		
 		);
 end bo;
 
@@ -18,7 +24,7 @@ architecture behave of bo is
 	signal opUla: std_logic_vector(3 downto 0);
 	signal flagZula : std_logic_vector(1 downto 0);
 	signal dado : std_logic_vector(7 downto 0);
-	signal saida_multi : std_logic_vector (2*n-1 downto 0);
+	signal saida_multi, saida_divi : std_logic_vector ((2*n)-1 downto 0);
 
 	component contador is
 	port (	
@@ -51,7 +57,8 @@ architecture behave of bo is
 			opc : in std_logic_vector (3 downto 0);
 			flagZula : out std_logic_vector (1 downto 0);
 			Sula : out std_logic_vector(n-1 downto 0);
-			saida_multi : in std_logic_vector(n-1 downto 0)
+			saida_multi : in std_logic_vector(n-1 downto 0);
+			saida_divi : in std_logic_vector(n-1 downto 0)
 			);
 	end component;
 		
@@ -61,6 +68,22 @@ architecture behave of bo is
 			clk, enMulti: std_logic;
 			Saida: out std_logic_vector((N*2)-1 downto 0));
 	end component;
+		
+		component divisor is
+		GENERIC (N : INTEGER := 4);
+		port (
+				Q: in std_logic_vector(N-1 downto 0);
+				M: in std_logic_vector(n-1  downto 0);
+				resultado: out std_logic_vector(n-1 downto 0);
+				
+				--divisor
+				Amenor, Pronto: out std_logic;
+				clk, RegM, RegN, RegAQ, Q0, Dlc, R: in std_logic;
+				OP, mux_aq: in std_logic_vector(1 downto 0)
+				
+			  );
+		end component;
+		
 		
 begin
 	
@@ -73,8 +96,10 @@ begin
 	regOp : reg generic map (n) port map (clk, enOp, dado(3 downto 0), opUla);
 	regS : reg generic map (n) port map (clk, enOut, Sula, S);
 	regZ : reg generic map (2) port map (clk, enOut, flagZula, flagZ);
-	ula1 : ula generic map (n) port map ( A, B, opUla, flagZula, Sula, saida_multi(n-1 downto 0));
+	ula1 : ula generic map (n) port map ( A, B, opUla, flagZula, Sula, saida_multi(n-1 downto 0), saida_divi(n-1 downto 0));
 	
 	multi : WallaceTree generic map (n) port map (A,B,clk,enMulti,saida_multi);
+	
+	divi : divisor generic map (n) port map (A,B,saida_divi(n-1 downto 0), Amenor, Pronto, clk, RegM, RegN, RegAQ, Q0, Dlc, R, OP, mux_aq);
 
 end behave;

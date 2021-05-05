@@ -61,4 +61,7 @@ set_global_assignment -name VHDL_FILE ula.vhd
 set_global_assignment -name QIP_FILE ROM.qip
 set_global_assignment -name VHDL_FILE and_vector.vhd
 set_global_assignment -name VHDL_FILE multiplicador.vhd
+set_global_assignment -name VHDL_FILE contaN.vhd
+set_global_assignment -name VHDL_FILE divisor.vhd
+set_global_assignment -name VHDL_FILE reg_divisor.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

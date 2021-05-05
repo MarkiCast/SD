@@ -1,0 +1,135 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.ALL;
+USE ieee.std_logic_unsigned.all;
+
+
+entity divisor is
+GENERIC (N : INTEGER := 4);
+port (
+		Q: in std_logic_vector(N-1 downto 0);
+		M: in std_logic_vector((N/2)-1  downto 0);
+		R: in std_logic;
+		Clock: in std_logic;
+		B: out std_logic_vector((N/2) downto 0);
+		resultado: out std_logic_vector((N*2) downto 0);
+		state: out std_logic_vector(3 downto 0);
+		count: out std_logIC_VECTOR(7 downto 0);
+		rising_edge_of_the_clock: out std_logic
+     );
+end divisor;
+
+architecture behv of divisor is
+component Reg is
+generic (N : integer);
+port(
+		 CLK: in std_logic;
+		 R: in std_logic;
+		 E: in std_logic;
+		 Dlc: in std_logic;
+		 D: in std_logic_vector(N-1 downto 0);
+		 Q: out std_logic_vector(N-1 downto 0)
+		 
+		 );
+end component;
+
+component BC is
+port(
+		Amenor, Pronto: in std_logic;
+		CLK: in std_logic;
+		RESET: in std_logic;
+		RegM, RegN, RegAQ, Q0: out std_logic;
+		OP, mux_aq: out std_logic_vector(1 downto 0);
+		Dlc, R: out std_logic;
+		state: out std_logIC_VECTOR(3 downto 0)
+);
+end component;
+
+component ContaN is
+GENERIC (N : INTEGER);
+port(CLK: in std_logic;
+  CLR: in std_logic;
+  ENA: in std_logic;
+  S: out std_logic;
+  Numero: out std_LOGIC_VECTOR(7 downto 0)
+  );
+end component;
+signal Maux:std_logic_vector((N/2)downto 0);
+signal AQ, AQaux: std_logic_vector(N*2 downto 0);
+constant zero: std_LOGIC_VECTOR(N downto 0) := (others => '0') ;
+signal S: std_LOGIC_VECTOR(N downto 0);
+signal saida: std_logic_vector((N*2) downto 0);
+signal Mmodificado: std_logic_vector(N/2 downto 0) := (others => '0');
+signal  Amenor, Pronto, RegM, RegAQ, RegCount, q0, Dlc,   Reset_Reg: std_logic;
+signal mux_aq, OP: std_logic_vector(1 downto 0);
+signal NA: std_logic := '0';
+
+begin 
+Mmodificado <= "0" & M(N/2-1 downto 0);
+B <= Mmodificado;
+CONTROLE: BC port map(
+			Amenor => Amenor,
+			Pronto => Pronto,
+			CLK => Clock,
+			RESET => R,
+			RegM => RegM,
+			RegN => RegCount,
+			RegAQ => RegAQ,
+			OP => OP,
+			Dlc => Dlc,
+			R => Reset_Reg,
+			Q0 => q0,
+			mux_aq => mux_aq,
+			state => state
+);
+
+Amenor <= std_logic(AQAux((N*2)));
+REGISTM : Reg generic map (N => N/2 +1)
+			port map (
+			CLK => Clock,
+			R => Reset_Reg,
+			E => RegM,
+			Dlc => NA,
+			D => Mmodificado,
+			Q => Maux
+			);
+
+
+REGISTAQ : Reg generic map (N => N*2+1)
+			port map (
+			CLK => Clock,
+			R => Reset_Reg,
+			E => RegAQ,
+			Dlc => Dlc,
+			D => AQ,
+			Q => AQaux
+			);
+
+PRONTO_SINAL : ContaN generic map (N => N/2 + 1)
+					port map(
+					CLK => Clock,
+					CLR => Reset_Reg,
+					ENA => RegCount,
+					S => Pronto,
+					Numero => count);
+
+with mux_aq select
+	AQ <=	S&(AQAux(N-1 downto 0)) when "00",
+			zero&Q when "01",
+			AQAux(N*2 downto 1)&q0 when "11",
+			AQAux when others;
+
+with op select
+	S <=  AQAux(N*2 downto N) - Maux when "01",
+			AQAux(N*2 downto N) + Maux when "10",
+			AQAux(N*2 downto N) when others;			
+process(Pronto)
+begin
+	if (pronto = '1') then
+		resultado <= saida;
+	end if;
+end process;
+Saida <= AQAux;
+rising_edge_of_the_clock <= pronto;
+end behv;
+    
