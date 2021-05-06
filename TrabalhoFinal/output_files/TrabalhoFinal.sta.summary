@@ -1,0 +1,77 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow Model Setup 'clk'
+Slack : -47.209
+TNS   : -1096.095
+
+Type  : Slow Model Setup 'bc:blocontrole|state.S3'
+Slack : -3.480
+TNS   : -6.028
+
+Type  : Slow Model Setup 'bc:blocontrole|state.S0'
+Slack : -3.234
+TNS   : -11.938
+
+Type  : Slow Model Hold 'clk'
+Slack : -2.242
+TNS   : -15.326
+
+Type  : Slow Model Hold 'bc:blocontrole|state.S0'
+Slack : -1.230
+TNS   : -3.487
+
+Type  : Slow Model Hold 'bc:blocontrole|state.S3'
+Slack : -0.456
+TNS   : -0.792
+
+Type  : Slow Model Minimum Pulse Width 'clk'
+Slack : -1.423
+TNS   : -99.610
+
+Type  : Slow Model Minimum Pulse Width 'bc:blocontrole|state.S0'
+Slack : 0.500
+TNS   : 0.000
+
+Type  : Slow Model Minimum Pulse Width 'bc:blocontrole|state.S3'
+Slack : 0.500
+TNS   : 0.000
+
+Type  : Fast Model Setup 'clk'
+Slack : -20.211
+TNS   : -459.758
+
+Type  : Fast Model Setup 'bc:blocontrole|state.S3'
+Slack : -1.556
+TNS   : -2.364
+
+Type  : Fast Model Setup 'bc:blocontrole|state.S0'
+Slack : -1.188
+TNS   : -4.056
+
+Type  : Fast Model Hold 'clk'
+Slack : -1.458
+TNS   : -23.000
+
+Type  : Fast Model Hold 'bc:blocontrole|state.S0'
+Slack : -0.534
+TNS   : -1.503
+
+Type  : Fast Model Hold 'bc:blocontrole|state.S3'
+Slack : -0.186
+TNS   : -0.337
+
+Type  : Fast Model Minimum Pulse Width 'clk'
+Slack : -1.423
+TNS   : -99.610
+
+Type  : Fast Model Minimum Pulse Width 'bc:blocontrole|state.S0'
+Slack : 0.500
+TNS   : 0.000
+
+Type  : Fast Model Minimum Pulse Width 'bc:blocontrole|state.S3'
+Slack : 0.500
+TNS   : 0.000
+
+------------------------------------------------------------
