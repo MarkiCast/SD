@@ -32,15 +32,14 @@ port(
 		 );
 end component;
 
-
-component ContaN is
-GENERIC (N : INTEGER);
-port(CLK: in std_logic;
-  CLR: in std_logic;
-  ENA: in std_logic;
-  S: out std_logic
-  );
-end component;
+	component ContaN is
+		GENERIC (N : INTEGER);
+		port(CLK: in std_logic;
+			  CLR: in std_logic;
+			  ENA: in std_logic;
+			  S: out std_logic
+			  );
+	end component;
 
 	signal Maux:std_logic_vector((N/2)downto 0);
 	signal AQ, AQaux: std_logic_vector(N*2 downto 0);

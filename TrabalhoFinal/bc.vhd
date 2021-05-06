@@ -4,23 +4,17 @@ USE ieee.std_logic_1164.all;
 ENTITY bc IS
 PORT (clk : IN STD_LOGIC;
 		opcode: in std_logic_vector(3 downto 0);
-		enPC, enA, enB, enOut, enOp, enMulti: OUT STD_LOGIC;
-		
-		--divisor
-		Amenor, Pronto: in std_logic;
-		RegM, RegN, RegAQ, Q0, Dlc, R: out std_logic;
-		OP, mux_aq: out std_logic_vector(1 downto 0)
-		
+		enPC, enA, enB, enOut, enOp, enMulti: OUT STD_LOGIC
 		);
 END bc;
 
 ARCHITECTURE behave OF bc IS
-	TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20);
+	TYPE state_type IS (S0, S1, S2, S3, S4, S5, S6, s7, s8, s9, s10);
 	SIGNAL state: state_type;
 	signal pcaux : std_logic_vector (1 downto 0) := "00";
 BEGIN
 	-- Logica de proximo estado (e registrador de estado)
-	PROCESS (clk, pcaux, opcode, AMenor, Pronto)
+	PROCESS (clk, pcaux, opcode)
 	BEGIN
 		IF rising_edge(clk) THEN
 			CASE state IS
@@ -58,42 +52,11 @@ BEGIN
 				
 				when s9 => if (opcode = "1000") then
 									state <= s10;
-								elsif (opcode = "1001") then
-									state <= s11;
 								else
 									state <= s0;
 								end if;
 								
 				when s10 => state <= s0;
-				
-				--divisor
-				when S11 => state <= S12;
-		
-				when S12 => state <= S13;
-			
-				when S13 => state <= S14;
-					
-				when S14 => state <= s15;
-		
-				when s15 => if (AMenor = '1') then
-									state <= S16;
-								else
-									state <= S17;
-								end if;
-			
-				when S16 => state <= S18;
-			
-				when S17 => state <= S18;  --Estado do count
-			
-				when s19=> if (Pronto = '1') then
-								state <= S20;
-							else
-								state <= s18;
-							end if;
-							
-				when s18  => state  <= s13;
-				
-				when s20 => state <= s0;
 				
 			END CASE;
 		END IF;
@@ -111,15 +74,6 @@ BEGIN
 				enOut <= '1';
 				pcaux <= "00";
 				enMulti <= '0';
-				
-				R <= '1';
-				RegM <= '0';
-				RegN <='0';
-				RegAQ <= '0';
-				Q0 <= '0';
-				op <= "00";
-				mux_aq <= "01";
-				dlc <= '0';
 				
 			WHEN S1 => 
 				enPC <= '1';
@@ -163,108 +117,6 @@ BEGIN
 				enOut <= '0';
 				
 			WHEN S10 => enMulti <= '1';
-				
-			--divisor	
-						
-			when S11 => R <= '1';
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <= '0';
-						  Q0 <= '0';
-						  op <= "00";
-						  mux_aq <= "01";
-						  dlc <= '0';
-						 
-								
-			 when S12 => R <= '0';
-						  RegM <= '1';
-						  RegN <='0';
-						  RegAQ <='1';
-						  Q0 <= '0';
-						  op <= "00";
-						  mux_aq <= "01";
-						  dlc <= '0';
-						 
-						  
-								
-			 when S13 =>  R <= '0';
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <='0';
-						  Q0 <= '0';
-						  op <= "00";
-						  mux_aq <= "10";
-						  dlc <= '1';
-
-				
-			 when S14 =>R <= '0';
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <='1';
-						  Q0 <= '0';
-						  op <= "01";
-						  mux_aq <= "00";
-						  dlc <= '0';
-
-			when s15 =>  R <= '0';
-								  RegM <= '0';
-								  RegN <='0';
-								  RegAQ <='0';
-								  Q0 <= '0';
-								  op <= "00";
-								  mux_aq <= "10";
-								  dlc <= '0';			
-			 
-			 when S16 =>  R <= '0'; --Estado que faz A+M  e Q0=0
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <='1';
-						  Q0 <= '0';
-						  op <= "10";
-						  mux_aq <= "00";
-						  dlc <= '0';
-
-			  
-			 when S17 => R <= '0';
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <='1';
-						  Q0 <= '1';
-						  op <= "10";
-						  mux_aq <= "11";
-						  dlc <= '0';
-			
-			when s18 =>  R <= '0';
-						  RegM <= '0';
-						  RegN <='1';
-						  RegAQ <='0';
-						  Q0 <= '0';
-						  op <= "00";
-						  mux_aq <= "01";
-						  dlc <= '0';
-			 
-			 
-			 when s19 => R <= '0';
-						  RegM <= '0';
-						  RegN <='0';
-						  RegAQ <='0';
-						  Q0 <= '0';
-						  op <= "00";
-						  mux_aq <= "01";
-						  dlc <= '0';
-																 
-										  
-			 when s20 =>  R <= '0';
-								  RegM <= '0';
-								  RegN <='0';
-								  RegAQ <='0';
-								  Q0 <= '0';
-								  op <= "00";
-								  mux_aq <= "10";
-								  dlc <= '0';
-
-		
-						
 				
 		END CASE;
 	END PROCESS;
